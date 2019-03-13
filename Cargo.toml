@@ -1,0 +1,11 @@
+[package]
+name = "pointerpos"
+version = "0.1.0"
+authors = ["Luuk van der Duim <luukvanderduim@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+libxdo-sys = "0.11"
+libc = "0.2.50"
+x11 = "2.18.1"
+xcb = "0.8.2"
