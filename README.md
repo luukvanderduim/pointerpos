@@ -1,7 +1,5 @@
 # pointerpos
 
-============
-
 A small example using [breadx](https://github.com/bread-graphics/breadx), a Rust X11 protocol implementation, to query the pointer position.
 
 ## License
