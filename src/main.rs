@@ -1,28 +1,16 @@
-use std::time::Duration;
-use xcb;
+use breadx::{prelude::*, AsyncDisplayConnection};
+use std::error::Error;
 
-fn main() {
-    let zzz: Duration = std::time::Duration::from_millis(20);
+#[tokio::main(flavor = "current_thread")]
+async fn main() -> Result<(), Box<dyn Error>> {
+    let mut conn = AsyncDisplayConnection::create_async(None, None).await?;
+    let root = conn.default_screen().root;
 
-    let (conn, screen_num) = xcb::Connection::connect(None).unwrap();
-    let setup = conn.get_setup();
-    let screen = setup.roots().nth(screen_num as usize).unwrap();
+    let mut qpr = breadx::auto::xproto::QueryPointerRequest::default();
+    qpr.window = root;
 
-    let root_id = screen.root();
-
-    // let pointer_coords = xcb::xproto::Point::new(x: 0, y: 0);
-
-    loop {
-        let pointercookie = xcb::xproto::query_pointer(&conn, root_id);
-        std::thread::sleep(zzz);
-
-        match pointercookie.get_reply() {
-            Ok(r) => {
-                print!("Coordinates: {},{}  \r", r.root_x(), r.root_y());
-            }
-            Err(_) => {
-                panic!("could not get coordinates of pointer");
-            }
-        };
-    }
+    let req_cookie = conn.send_request_async(qpr).await?;
+    let reply = conn.resolve_request_async(req_cookie).await?;
+    println!("Pointer is at x:{}, y:{}", reply.root_x, reply.root_y);
+    Ok(())
 }
